@@ -6,7 +6,7 @@ import smtplib
 #------------------------------------------------------------------------------
 
 def symbol_entry():
-    print "\n"
+    print "\nEnter a symbol followed by return.  Enter 'done' when finished.\n"
     stock_list = []
 
     while True:
@@ -27,16 +27,16 @@ def error_check(stock_list):
         print("{}) " + "{}").format(x, items)
 
     print '\n'
-    print "Enter '1' if the above list is complete and correct."
-    print "Enter '2' to restart if an error exists. \n"
-    error_check = raw_input("Enter '1' or '2' >>> ")
+    print "Enter 'y' if the above list is complete and correct."
+    print "Enter 'n' to restart if an error exists. \n"
+    error_check = raw_input("Enter 'y' or 'n' >>> ")
 
-    if error_check == '2':
+    if error_check == 'n':
         start()
-    elif error_check == '1':
+    elif error_check == 'y':
         pass
     else:
-        print "You entered something other than '1' or '2'"
+        print "You entered something other than 'y' or 'n'"
         error_check()
 
 def start():
@@ -48,9 +48,9 @@ def phone_info():
     print"\n"
     phone_number = raw_input("Enter cell phone number: ")
     print "\nWho is your wireless Carrier?:"
-    print "1. Verizon Wireless"
-    print "2. AT&T"
-    print "3. Sprint \n"
+    print "1) Verizon Wireless"
+    print "2) AT&T"
+    print "3) Sprint \n"
     carrier = raw_input("Enter '1', '2' or '3' >>> ")
     if carrier == '2':
         carrier = '@txt.att.net'
@@ -119,10 +119,10 @@ for stocks in stock_list:
     price, change = get_price(stocks)
     stocks_list_price.append(price)
     stocks_list_change.append(change)
-    l_str = stocks + ":   "
-    r_str = '$' + price
+    # l_str = stocks + ":   "
+    # r_str = '$' + price
     #str = l_str.ljust(9) + r_str.rjust(8) + "\n" # up to 8 stocks in a txt
-    str = l_str + r_str + '\n'
+    str = stocks + ':   $' + price + '\n'
     txt.write(str)
 
 
