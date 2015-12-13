@@ -1,12 +1,14 @@
-import urllib
-import os, sys
-from time import sleep
+import getpass
+import os
 import smtplib
+import urllib
+from time import sleep
 
-#------------------------------------------------------------------------------
 
 def symbol_entry():
-    print "\nEnter a symbol followed by return.  Enter 'done' when finished.\n"
+    print "SMS Stock Alert"
+    print "Enter a symbol followed by return."
+    print "Enter 'done' when finished.\n"
     stock_list = []
 
     while True:
@@ -18,17 +20,15 @@ def symbol_entry():
             break
     return stock_list
 
+
 def error_check(stock_list):
     print '\n'
-
+    print "Is this list correct?"
     x = 0
     for items in stock_list:
         x += 1
         print("{}) " + "{}").format(x, items)
 
-    print '\n'
-    print "Enter 'y' if the above list is complete and correct."
-    print "Enter 'n' to restart if an error exists. \n"
     error_check = raw_input("Enter 'y' or 'n' >>> ")
 
     if error_check == 'n':
@@ -39,37 +39,44 @@ def error_check(stock_list):
         print "You entered something other than 'y' or 'n'"
         error_check()
 
+
 def start():
     stock_list = symbol_entry()
     error_check(stock_list)
     return stock_list
 
+
 def phone_info():
     print"\n"
     phone_number = raw_input("Enter cell phone number: ")
     print "\nWho is your wireless Carrier?:"
-    print "1) Verizon Wireless"
-    print "2) AT&T"
-    print "3) Sprint \n"
-    carrier = raw_input("Enter '1', '2' or '3' >>> ")
-    if carrier == '2':
+    print "(V)erizon Wireless"
+    print "(A)T&T"
+    print "(S)print \n"
+    carrier = raw_input("Enter 'V', 'A' or 'S' >>> ")
+    if carrier.lower() == 'a':
         carrier = '@txt.att.net'
-    elif carrier == '1':
+    elif carrier.lower() == 'v':
         carrier = '@vtext.com'
-    elif carrier == '3':
+    elif carrier.lower() == 's':
         carrier = '@messaging.sprintpcs.com'
     from_email = raw_input("Enter a GMAIL email address: ")
-    gmail_password = raw_input("Enter your gmail password: ")
+    gmail_password = getpass.getpass('Password: ')
     to_email = phone_number + carrier
     return from_email, to_email, gmail_password
 
+
 def time_interval():
-    minutes = int(raw_input("\nHow often would you like to receive updates (minutes): "))
+    minutes = int(raw_input("\nSMS alert interval in minutes: "))
+    print "\nUpdating price via SMS every %d minutes." % minutes
+    print "ctrl-c to terminate..."
     seconds = minutes * 60
     return seconds
 
+
 def get_price(symbol):
-    url = "http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=sl1d1c1hgv" % symbol
+    url = "http://download.finance.yahoo.com/d/quotes.csv?s="\
+        "%s&f=sl1d1c1hgv" % symbol
     f = urllib.urlopen(url)
     s = f.read()
     f.close()
@@ -78,6 +85,7 @@ def get_price(symbol):
     price = L[1]
     change = L[3]
     return price, change
+
 
 def send_email(from_email, to_email, gmail_password, txt_msg):
     SERVER = 'smtp.gmail.com'
@@ -98,7 +106,8 @@ def send_email(from_email, to_email, gmail_password, txt_msg):
     session.sendmail(sender, recipient, headers + "\r\n\r\n" + body)
     session.quit()
 
-#------------------------------------------------------------------------------
+
+os.system('cls' if os.name == 'nt' else 'clear')
 
 # 1) User inputs stocks
 stock_list = start()
@@ -119,9 +128,6 @@ for stocks in stock_list:
     price, change = get_price(stocks)
     stocks_list_price.append(price)
     stocks_list_change.append(change)
-    # l_str = stocks + ":   "
-    # r_str = '$' + price
-    #str = l_str.ljust(9) + r_str.rjust(8) + "\n" # up to 8 stocks in a txt
     str = stocks + ':   $' + price + '\n'
     txt.write(str)
 
